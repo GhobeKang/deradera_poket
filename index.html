@@ -1092,8 +1092,8 @@
             }
         }
 
-        /** 출석 API: [ { "name": "...", "attendance_count": N }, ... ] 만 지원 */
-        function applyAttendanceSummaryToRoster(rosterData, rawAttendanceJson) {
+        /** 출석 API: [ { "name": "...", "attendance_count": N }, ... ] — 멤버 attendance와 동일한 만큼 gameState.scores[팀] 조정 */
+        function applyAttendanceSummaryToRoster(rosterData, rawAttendanceJson, gameState) {
             var rows = Array.isArray(rawAttendanceJson) ? rawAttendanceJson : [];
             var byName = new Map();
             for (var i = 0; i < rows.length; i++) {
@@ -1114,7 +1114,16 @@
                 list.forEach(function(m) {
                     if (!m || typeof m.name !== 'string') return;
                     var key = m.name.trim();
-                    if (byName.has(key)) m.attendance = byName.get(key);
+                    if (!byName.has(key)) return;
+                    var newVal = byName.get(key);
+                    var oldVal = m.attendance || 0;
+                    var diff = newVal - oldVal;
+                    m.attendance = newVal;
+                    if (gameState && gameState.scores) {
+                        var cur = gameState.scores[teamKey];
+                        if (typeof cur !== 'number' || isNaN(cur)) cur = 0;
+                        gameState.scores[teamKey] = cur + diff;
+                    }
                 });
             });
         }
@@ -1143,7 +1152,7 @@
 
                     if (loadedData && loadedData.gameState && loadedData.rosterData) {
                         if (attendanceJson) {
-                            applyAttendanceSummaryToRoster(loadedData.rosterData, attendanceJson);
+                            applyAttendanceSummaryToRoster(loadedData.rosterData, attendanceJson, loadedData.gameState);
                         }
                         safeSet(STORAGE_KEY_GAME, JSON.stringify(loadedData.gameState));
                         safeSet(STORAGE_KEY_ROSTER, JSON.stringify(loadedData.rosterData));
