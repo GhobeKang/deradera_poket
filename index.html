@@ -1097,7 +1097,7 @@
                 showLoading('서버에서 최신 게임판을 연동 중입니다...');
                 try {
                     const [attendanceRes, response] = await Promise.all([
-                        fetch(`https://kuuki-jp.com/api/attendance/summary-by-user`, { method: 'GET' }),
+                        fetch(`https://kuuki-jp.com:8956/api/attendance/summary-by-user`, { method: 'GET' }),
                         fetch(`${SERVER_URL}?action=load`, {method: 'GET', redirect: 'follow'})
                     ]);
                     ;
