@@ -39,15 +39,37 @@
         /* 와이드 3단 레이아웃 */
         #main-container { display: flex; gap: 20px; width: 100%; max-width: 1700px; align-items: stretch; justify-content: center; }
 
-        /* 📜 설명서 패널 */
-        #manual-panel { 
-            flex: 0.7; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 25px; 
-            border: 2px solid #bdc3c7; box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
-            font-size: 0.95em; line-height: 1.6; color: #34495e;
+        /* 좌측 메뉴 및 전광판 패널 */
+        #left-panel { flex: 0.7; display: flex; flex-direction: column; gap: 10px; min-width: 300px; }
+        .left-menu-btn { width: 100%; padding: 18px 10px; border-radius: 10px; font-size: 1.1em; font-weight: bold; color: white; border: none; cursor: pointer; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .left-menu-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
+        .btn-skill { background: linear-gradient(135deg, #a252c8, #3b82f6); }
+        .btn-guide { background: linear-gradient(135deg, #e67e22, #f39c12); }
+        
+        #news-board {
+            flex: 1; flex-basis: 0; background: #161623; border: 2px solid #f1c40f; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); padding: 15px; overflow-y: auto; color: #fff; display: flex; flex-direction: column;
         }
-        #manual-panel h2 { color: #d35400; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; text-align: center;}
-        #manual-panel h3 { color: #2980b9; margin-bottom: 5px; margin-top: 20px;}
-        .manual-box { background: rgba(241, 243, 245, 0.8); padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #e74c3c;}
+        #news-board h3 { margin-top:0; color:#f1c40f; text-align:center; padding-bottom:12px; border-bottom:2px solid #333; font-size:1.1em; letter-spacing: -0.5px; }
+        #news-list { list-style: none; padding: 0; margin: 0; font-size: 0.9em; line-height: 1.5; overflow-y: auto; flex: 1; }
+        #news-list li { border-bottom: 1px solid #2a2a3b; padding: 10px 0; animation: fadeIn 0.5s; word-break: keep-all; }
+        #news-list li:last-child { border-bottom: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 모달 스타일 */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: #fff; width: 90%; max-width: 800px; max-height: 85vh; border-radius: 15px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; padding: 35px 25px;
+        }
+        .modal-close {
+            position: absolute; top: 15px; right: 20px; font-size: 1.8em; cursor: pointer; color: #7f8c8d; transition: color 0.2s; font-weight: bold; line-height: 1;
+        }
+        .modal-close:hover { color: #e74c3c; }
+        .modal-content h2 { margin-top: 0; color: #d35400; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+
+        .guide-box { background: #f8f9fa; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #e74c3c; line-height: 1.6; color: #2c3e50; font-size: 0.95em; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .guide-box h3 { margin-top:0; color:#2980b9; font-size: 1.1em; margin-bottom: 8px;}
         .highlight { color: #d35400; font-weight: bold; }
 
         #grid-container {
@@ -146,6 +168,8 @@
 
     <h1>🏆 돼라돼라 어드벤처 _ 섹스하트골든♥</h1>
 
+    <button id="mobile-mode-btn" onclick="toggleMobileMode()" style="background: #e056fd; color: white; border-color: #be2edd; margin-bottom: 20px; padding: 12px 24px; font-size: 1.2em; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-weight: bold; cursor: pointer;">📱 모바일 출석 전용 화면 전환</button>
+
     <div id="top-panel">
         <div id="admin-panel">
             <div id="admin-lock-screen">
@@ -205,34 +229,57 @@
 
     <div id="main-container">
         
-        <div id="manual-panel">
-            <h2>📜 연동 게임 가이드 (서버 저장 로직) 🌐</h2>
+        <div id="left-panel">
+            <button class="left-menu-btn btn-skill" onclick="openSkillModal()">📖 포켓몬 스킬 보기</button>
+            <button class="left-menu-btn btn-guide" onclick="openGuideModal()">📜 게임 가이드</button>
             
-            <h3>1. 구글 서버 연동 방식</h3>
-            <div class="manual-box">
-                • 이제 복잡하게 세이브 코드를 복사해서 단톡방에 올릴 필요가 없습니다!<br>
-                • <strong>[⏬ 불러오기]</strong> 버튼을 누르면 구글 드라이브(서버)에서 제일 최근에 수정된 게임 데이터를 가져와 똑같은 맵을 볼 수 있습니다.<br>
-                • 관리자가 맵이나 점수를 수정하고 <strong>[⏫ 서버에 저장하기]</strong> 버튼을 누르면 서버에 바로 갱신됩니다!
+            <div id="news-board">
+                <h3>📜 실시간 전투 속보 전광판</h3>
+                <ul id="news-list"></ul>
             </div>
-
-            <h3>2. 구역별 비용 및 득점 💰</h3>
-            <div class="manual-box">
-                • <strong>일반땅:</strong> <span class="highlight">3P</span> 소모 (기본 3점 / 요새화 시 +2점 추가)<br>
-                • <strong>외곽(전설/체육관):</strong> <span class="highlight">5P</span> 소모 (기본 5점 / 요새화 시 +7점 추가) 🔒요새화 비용 10P<br>
-                • <strong>포켓몬마스터(정중앙):</strong> <span class="highlight">10P</span> 소모 (기본 15점 / 요새화 시 +20점 추가) 🔒요새화 비용 20P<br>
-                • <strong>🚀 로켓단 구역:</strong> <span class="highlight">5P</span> 소모. 클릭 즉시 요새화되며 <strong>+10점</strong> 획득!
-            </div>
-
-            <h3>3. 특수 세트 보너스 🎁</h3>
-            <div class="manual-box">
-                • <strong>전설 구역 장악:</strong> 각 외곽 끝 3칸(디아루가/펄기아/기라티나)을 모두 점령 시 구역당 <span class="highlight">+10점</span><br>
-                • <strong>챔피언 통합 제패:</strong> 정중앙 포함 7칸을 모두 <span style="color:#e74c3c;">'요새화🔒'</span> 시 무려 <span class="highlight">+50점</span> 추가!
-            </div>
-            
         </div>
 
         <div id="grid-container"></div>
         <div id="roster-container"></div>
+    </div>
+
+    <!-- 게임 가이드 모달 -->
+    <div id="guide-modal" class="modal-overlay" onclick="if(event.target===this) closeGuideModal()">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeGuideModal()">✖</span>
+            <h2>📜 기본 규칙</h2>
+            
+            <div class="guide-box">
+                <h3>[이동 및 행동]</h3>
+                1️⃣ 팀의 말은 하루에 딱 1칸만 이동 가능!<br>
+                2️⃣ 이동 후 <strong>[스킬 사용]</strong> 또는 <strong>[주변 1칸 점령]</strong> 중 택 1<br>
+                3️⃣ 상대팀 일반 구역 강탈 = <span class="highlight">4P 소모</span> (⚠️요새화된 구역은 무적이므로 강탈 절대 불가!)
+            </div>
+
+            <div class="guide-box">
+                <h3>[구역별 비용 및 득점 💰]</h3>
+                🌱 <strong>일반 구역:</strong> <span class="highlight">3P 소모</span> (기본 3점 / 요새화 시 +2점 추가, 🔒요새화 비용 5P)<br><br>
+                🏛️ <strong>외곽(전설/체육관):</strong> <span class="highlight">5P 소모</span> (기본 5점 / 요새화 시 +7점 추가, 🔒요새화 비용 10P)<br><br>
+                👑 <strong>포켓몬마스터(정중앙):</strong> <span class="highlight">10P 소모</span> (기본 15점 / 요새화 시 +20점 추가, 🔒요새화 비용 20P)<br><br>
+                🚀 <strong>로켓단 구역:</strong> <span class="highlight">5P 소모</span> (점령 클릭 즉시 자동으로 요새화되며 <strong>+10점 획득!</strong>)
+            </div>
+            
+            <div class="guide-box">
+                <h3>[특수 세트 보너스 🎁]</h3>
+                ✨ <strong>전설 구역 장악:</strong> 각 외곽 끝 3칸(썬더/프리져/파이어)을 모두 점령 시 구역당 <span class="highlight">+10점</span><br><br>
+                🏆 <strong>챔피언 통합 제패:</strong> 정중앙 포함 7칸을 모두 '요새화 🔒' 시 무려 <span class="highlight">+50점 추가!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스킬 도감 모달 -->
+    <div id="skill-modal" class="modal-overlay" onclick="if(event.target===this) closeSkillModal()">
+        <div class="modal-content" style="max-width: 1100px;">
+            <span class="modal-close" onclick="closeSkillModal()">✖</span>
+            <h2 style="border:none; margin-bottom:0;">📖 포켓몬/스킬 도감</h2>
+            <div id="skill-modal-content" style="display:flex; flex-direction:column; gap:20px; margin-top:15px;">
+            </div>
+        </div>
     </div>
 
     <!-- 사진 업로드용 히든 인풋 -->
@@ -479,6 +526,176 @@
             initGrid(); 
             if(gameState.mapBg) document.documentElement.style.setProperty('--map-bg-image-path', gameState.mapBg);
             updateTopButtons(); 
+            renderNews(); // 게임 로드시 전광판 갱신
+        }
+
+        // --- 모달 로직 ---
+        function openGuideModal() { document.getElementById('guide-modal').style.display = 'flex'; }
+        function closeGuideModal() { document.getElementById('guide-modal').style.display = 'none'; }
+        
+        function renderPokedex() {
+            const wrap = document.getElementById('skill-modal-content');
+            wrap.innerHTML = '';
+            
+            // 데이터 설정: 유저의 이름이나 스킬에 키워드가 포함되어 있으면 일치시킴
+            const pokemonDict = [
+                { keys: ["홍이시", "케이시", "홍겔라", "홍딘"], pokeName: "케이시", sprite: "63", title: "위치 조작 (상대방과 위치 변경)", evos: [
+                    { r: "🔹", n: "홍이시", d: "2칸 내 상대방과 위치 변경" },
+                    { r: "🔹", n: "홍겔라", d: "3칸 내 상대방과 위치 변경" },
+                    { r: "👑", n: "홍딘", d: "거리 상관없이 맵 전체에서 위치 맞바꿈!", req: "통신진화 - 10P 소모" }
+                ]},
+                { keys: ["가프", "가디", "윈프"], pokeName: "가디", sprite: "58", title: "고속 이동 (이동 범위 확장)", evos: [
+                    { r: "🔹", n: "가프", d: "2칸 더 추가 이동" },
+                    { r: "👑", n: "윈프", d: "원하는 곳 어디든 즉시 이동!", req: "불꽃의 돌 - 파이어 요새화 달성" }
+                ]},
+                { keys: ["엽코리타", "시크리타", "치코리타", "베이엽프", "마기엽움"], pokeName: "치코리타", sprite: "152", title: "덩굴채찍 (적 끌어당기기)", evos: [
+                    { r: "🔹", n: "엽코리타", d: "상대방을 내 방향으로 2칸 끌어당김" },
+                    { r: "🔹", n: "베이엽프", d: "상대방을 내 방향으로 3칸 끌어당김" },
+                    { r: "👑", n: "마기엽움", d: "상대방을 내 주변 원하는 곳으로 강제 소환!" }
+                ]},
+                { keys: ["규뇽", "미뇽", "신규", "망규뇽"], pokeName: "미뇽", sprite: "147", title: "기가드레인 (적 출석 뺏어 아군 주머니로)", evos: [
+                    { r: "🔹", n: "규뇽", d: "4포인트로 발동" },
+                    { r: "🔹", n: "신규", d: "6포인트 (상대 각 팀 3점씩 강탈)" },
+                    { r: "👑", n: "망규뇽", d: "10포인트 (상대 각 팀 5점씩 강탈)" }
+                ]},
+                { keys: ["틍", "삐", "삐틍", "픽틍"], pokeName: "삐", sprite: "173", title: "치어리더 (3일간 팀원 출석 추가)", evos: [
+                    { r: "🔹", n: "틍", d: "출석 추가 +1" },
+                    { r: "🔹", n: "삐틍", d: "출석 추가 +2" },
+                    { r: "👑", n: "픽틍", d: "출석 획득량 2배!", req: "달의 돌 - 로켓단 4개 구역 요새화" }
+                ]},
+                { keys: ["야봉", "야돈", "야봉란", "야봉킹"], pokeName: "야돈", sprite: "79", title: "기억 조작 (포인트 획득량 펌핑)", evos: [
+                    { r: "🔹", n: "야봉", d: "포인트 획득 2배" },
+                    { r: "🔹", n: "야봉란", d: "포인트 획득 3배" },
+                    { r: "👑", n: "야봉킹", d: "포인트 획득 3배 + 1명 나눔 가능!", req: "왕의 징표석 - 아르세우스 요새화 달성" }
+                ]},
+                { keys: ["냐오신", "냐오불", "냐옹불", "냐오신이", "신이염"], pokeName: "냐오불", sprite: "727", title: "불지르기 (빈 구역 접근 금지)", evos: [
+                    { r: "🔹", n: "냐오신", d: "1칸 불지르기" },
+                    { r: "🔹", n: "냐오신이", d: "2칸 불지르기" },
+                    { r: "👑", n: "신이염", d: "3칸 불지르기" }
+                ]},
+                { keys: ["백호스", "또가스", "또백호스"], pokeName: "또가스", sprite: "109", title: "독안개 (적에게 -3P 페널티)", evos: [
+                    { r: "🔹", n: "백호스", d: "1칸 독안개 설치" },
+                    { r: "👑", n: "또백호스", d: "2칸 독안개 설치" }
+                ]},
+                { keys: ["메타몽"], pokeName: "메타몽", sprite: "132", title: "메타몽 (복사기)", evos: [
+                    { r: "👑", n: "메타몽", d: "7번 출석마다 다른 스킬 1회 카피!", req: "팀원 출석 효과 못 받음. 진화 없음" }
+                ]},
+                { keys: ["꼬무기", "꼬부기", "언니무기", "무송왕"], pokeName: "꼬부기", sprite: "7", title: "단단해지기 (내 주변 구역 무적&해제)", evos: [
+                    { r: "🔹", n: "꼬무기", d: "1칸 방어" },
+                    { r: "🔹", n: "언니무기", d: "2칸 방어" },
+                    { r: "👑", n: "무송왕", d: "3칸 방어" }
+                ]},
+                { keys: ["고베파덕", "고라파덕", "고덕"], pokeName: "고라파덕", sprite: "54", title: "최면 (부동산 환불 보장)", evos: [
+                    { r: "🔹", n: "고베파덕", d: "1칸 적용" },
+                    { r: "👑", n: "고덕", d: "3칸 적용", req: "물의 돌 - 프리저 요새화 달성" }
+                ]},
+                { keys: ["규통몬", "근육몬", "알통몬", "규육몬", "규력몬"], pokeName: "근육몬", sprite: "66", title: "지구던지기 (상대 구역 파괴)", evos: [
+                    { r: "🔹", n: "규통몬", d: "1칸 파괴 (소모 3P)" },
+                    { r: "🔹", n: "규육몬", d: "2칸 파괴 (소모 5P)" },
+                    { r: "👑", n: "규력몬", d: "3칸 파괴 (소모 7P)", req: "통신진화 - 10P 소모" }
+                ]},
+                { keys: ["석츄", "피츄", "이석츄", "바우츄"], pokeName: "피츄", sprite: "172", title: "연쇄 전기 (빈 구역 연속 구입)", evos: [
+                    { r: "🔹", n: "석츄", d: "빈 구역 1칸 연속 구매" },
+                    { r: "🔹", n: "이석츄", d: "빈 구역 2칸 연속 구매" },
+                    { r: "👑", n: "바우츄", d: "2칸 연속 구매 (1칸 무료!)", req: "천둥의 돌 - 썬더 요새화 달성" }
+                ]},
+                { keys: ["함키", "망키", "밍키", "성함숭", "저승함숭"], pokeName: "망키", sprite: "56", title: "도둑 원숭이 (상대 구역 내 걸로 강탈!)", evos: [
+                    { r: "🔹", n: "함키", d: "1칸 강탈 (소모 3P)" },
+                    { r: "🔹", n: "성함숭", d: "2칸 강탈 (소모 5P)" },
+                    { r: "👑", n: "저승함숭", d: "3칸 강탈 (소모 7P)", req: "우리팀 기본 20칸 이상일 때 진화" }
+                ]},
+                { keys: ["선호탕", "마크탕", "마크팅", "선호뭉"], pokeName: "마크탕", sprite: "296", title: "씨름판 뒤엎기 (내 구역 버리고 적 초기화)", evos: [
+                    { r: "🔹", n: "선호탕", d: "내 땅 1개 버리고 적 구역 2칸 초기화" },
+                    { r: "👑", n: "선호뭉", d: "내 땅 1개 버리고 적 구역 3칸 초기화" }
+                ]}
+            ];
+
+            const borderColors = { 'A': '#e74c3c', 'B': '#3498db', 'C': '#2ecc71' };
+            const teamEmojis = { 'A': '🔥', 'B': '💧', 'C': '🌿' };
+            
+            teamKeys.forEach(teamKey => {
+                const teamData = rosterData.members[teamKey] || [];
+                const teamName = rosterData.teamNames[teamKey] || teamKey + '팀';
+                
+                let html = `<div style="background:#f4f6f9; border-radius:10px; padding:15px; border-left:6px solid ${borderColors[teamKey]}; margin-bottom:20px;">
+                    <h3 style="margin-top:0; color:#2c3e50; font-size: 1.1em; margin-bottom: 10px; border-bottom:1px solid #e1e4e8; padding-bottom:10px;">
+                        ${teamEmojis[teamKey]} ${teamName} 스쿼드
+                    </h3>
+                    <div style="display:flex; overflow-x:auto; gap:15px; padding:5px 5px 15px 5px;">`;
+                
+                teamData.forEach(member => {
+                    const searchStr = ((member.name||"") + " " + (member.skill||"")).toLowerCase();
+                    let matchedPok = null;
+                    for (let pok of pokemonDict) {
+                        if (pok.keys.some(k => searchStr.includes(k.toLowerCase()))) {
+                            matchedPok = pok; break;
+                        }
+                    }
+
+                    const spriteUrl = matchedPok ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${matchedPok.sprite}.png` : 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png';
+                    const charImg = (member.imgUrl && member.imgUrl.includes('http')) ? member.imgUrl : spriteUrl;
+                    const pokeNameText = matchedPok ? matchedPok.pokeName : (member.skill || '포켓몬 없음');
+
+                    html += `<div style="flex:0 0 250px; background:#fff; border:1px solid #ddd; border-radius:10px; box-shadow:0 3px 6px rgba(0,0,0,0.08); display:flex; flex-direction:column; overflow:hidden;">
+                        <!-- 캐릭터 정보부 -->
+                        <div style="padding:15px; text-align:center; background:#fafbfc; border-bottom:2px solid #eee;">
+                            <div style="width:100%; height:130px; background:url('${charImg}') center/contain no-repeat; margin-bottom:12px;"></div>
+                            <strong style="display:block; font-size:1.15em; color:#333; margin-bottom:6px;">${member.name}</strong>
+                            <span style="font-size:0.85em; color:#666; background:#fff; border:1px solid #ccc; padding:3px 8px; border-radius:15px; display:inline-block;">${pokeNameText}</span>
+                        </div>
+                        
+                        <!-- 스킬 및 진화 목록부 -->
+                        <div style="padding:15px; flex:1; display:flex; flex-direction:column; gap:8px;">`;
+
+                    if (matchedPok) {
+                        html += `<div style="color:#d35400; font-weight:bold; font-size:0.9em; margin-bottom:10px; text-align:center; padding-bottom:8px; border-bottom:1px solid #eee;">[${matchedPok.title}]</div>`;
+                        
+                        matchedPok.evos.forEach(evo => {
+                            const isCrown = evo.r === '👑';
+                            const titleColor = isCrown ? '#c0392b' : '#2980b9';
+                            html += `<div style="font-size:0.85em; line-height:1.4; background:#f9f9f9; padding:8px 10px; border-radius:6px; border:1px solid #e1e4e8; margin-bottom:6px;">
+                                <div style="font-weight:bold; color:${titleColor}; border-bottom:1px solid #eee; padding-bottom:4px; margin-bottom:4px;">${evo.r} ${evo.n}</div>
+                                <div style="color:#444;">${evo.d}</div>
+                                ${evo.req ? `<div style="margin-top:6px; font-size:0.85em; color:#8e44ad; font-weight:bold;">✨ ${evo.req}</div>` : ''}
+                            </div>`;
+                        });
+                    } else {
+                        html += `<div style="font-size:0.85em; color:#999; text-align:center; padding:30px 0;">(스킬 정보 없음)</div>`;
+                    }
+                    html += `</div></div>`;
+                });
+                
+                html += `</div></div>`;
+                wrap.innerHTML += html;
+            });
+        }
+
+        function openSkillModal() {
+            renderPokedex();
+            document.getElementById('skill-modal').style.display = 'flex';
+        }
+        function closeSkillModal() { document.getElementById('skill-modal').style.display = 'none'; }
+
+        // --- 전광판 로직 ---
+        function addNews(teamKey, message) {
+            const time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second:'2-digit' });
+            if(!gameState.newsList) gameState.newsList = [];
+            gameState.newsList.unshift({ teamKey, message, time });
+            if(gameState.newsList.length > 50) gameState.newsList.length = 50; 
+            renderNews();
+        }
+
+        function renderNews() {
+            const board = document.getElementById('news-list');
+            if(!board) return;
+            board.innerHTML = '';
+            const teamColors = { 'A': '#ff6b6b', 'B': '#48dbfb', 'C': '#1dd1a1' };
+            (gameState.newsList || []).forEach(news => {
+                const li = document.createElement('li');
+                const teamName = (rosterData && rosterData.teamNames && rosterData.teamNames[news.teamKey]) ? rosterData.teamNames[news.teamKey] : news.teamKey + '팀';
+                li.innerHTML = `<span style="color:#aaa; font-size:0.85em; letter-spacing:-0.5px;">[${news.time}]</span> <strong style="color:${teamColors[news.teamKey]}; font-size:0.95em;">${emblems['home'+news.teamKey]} ${teamName}</strong><br> <span style="padding-left:14px; display:inline-block; margin-top:4px; font-size:0.9em;">${news.message}</span>`;
+                board.appendChild(li);
+            });
         }
 
         function loadGameState() {
@@ -530,12 +747,12 @@
 
         function getCellCost(r, c) {
             const coords = `${r},${c}`;
-            if (coords === specialAreas.championCenter) return { capture: 10, fortify: 20, isRocket: false }; 
+            if (coords === specialAreas.championCenter) return { capture: 10, steal: 10, fortify: 20, isRocket: false }; 
             if (specialAreas.championOuter.includes(coords) || specialAreas.dialga.includes(coords) || specialAreas.palkia.includes(coords) || specialAreas.giratina.includes(coords)) {
-                return { capture: 5, fortify: 10, isRocket: false }; 
+                return { capture: 5, steal: 5, fortify: 10, isRocket: false }; 
             }
-            if (specialAreas.rocket.includes(coords)) return { capture: 5, fortify: 0, isRocket: true }; 
-            return { capture: 3, fortify: 3, isRocket: false }; 
+            if (specialAreas.rocket.includes(coords)) return { capture: 5, steal: 5, fortify: 0, isRocket: true }; 
+            return { capture: 3, steal: 4, fortify: 5, isRocket: false }; 
         }
 
         function getZoneDisplay(type, isTip) {
@@ -724,17 +941,38 @@
             const owner = getCellOwner(cellEl);
             const cost = getCellCost(r, c); 
 
-            if (!owner || owner !== gameState.selectedTeam) {
+            let zoneName = '일반 구역';
+            if (cost.capture === 5 && !cost.isRocket) zoneName = '외곽 구역';
+            if (cost.capture === 10) zoneName = '정중앙(포켓몬마스터)';
+            if (cost.isRocket) zoneName = '로켓단 구역';
+
+            if (!owner) {
                 if (gameState.scores[gameState.selectedTeam] >= cost.capture) { 
                     gameState.scores[gameState.selectedTeam] -= cost.capture; 
                     claimTile(cellEl, gameState.selectedTeam); 
                     if (cost.isRocket) cellEl.classList.add('locked');
-                } else { alert(`포인트 부족! (이 구역 점령/뺏기: ${cost.capture}P 필요)`); }
+                    
+                    let earned = (cost.capture === 10) ? 15 : (cost.capture === 5 && !cost.isRocket ? 5 : 3);
+                    if (cost.isRocket) earned = 10;
+                    addNews(gameState.selectedTeam, `[${zoneName}] 점령 완료! <b>(+${earned}점)</b> / 소모: ${cost.capture}P`);
+                } else { alert(`포인트 부족! (이 구역 점령: ${cost.capture}P 필요)`); }
+            } else if (owner !== gameState.selectedTeam) {
+                if (gameState.scores[gameState.selectedTeam] >= cost.steal) { 
+                    gameState.scores[gameState.selectedTeam] -= cost.steal; 
+                    claimTile(cellEl, gameState.selectedTeam); 
+                    
+                    let earned = (cost.capture === 10) ? 15 : (cost.capture === 5 ? 5 : 3);
+                    addNews(gameState.selectedTeam, `상대팀(${rosterData.teamNames[owner]})의 [${zoneName}] 강탈 성공! <b>(+${earned}점)</b> / 소모: ${cost.steal}P`);
+                    addNews(owner, `🚨 <b>[${zoneName}]</b>을 ${rosterData.teamNames[gameState.selectedTeam]}에게 빼앗겼습니다!`);
+                } else { alert(`포인트 부족! (상대팀 구역 강탈: ${cost.steal}P 필요)`); }
             } else if (owner === gameState.selectedTeam) {
                 if (cost.isRocket) return; 
                 if (gameState.scores[gameState.selectedTeam] >= cost.fortify) {
                     if(confirm(`${cost.fortify}P를 지불하고 이 땅을 [요새화🔒] 하시겠습니까?`)) {
                         gameState.scores[gameState.selectedTeam] -= cost.fortify; cellEl.classList.add('locked');
+                        
+                        let boost = (cost.fortify === 20) ? 20 : (cost.fortify === 10 ? 7 : 2);
+                        addNews(gameState.selectedTeam, `[${zoneName}] 요새화 완료!🔒 <b>(추가 +${boost}점 확보)</b> / 소모: ${cost.fortify}P`);
                     }
                 } else { alert(`포인트 부족! (이 구역 요새화: ${cost.fortify}P 필요)`); }
             }
@@ -775,6 +1013,9 @@
         function addPoints(teamKey, amount) { 
             gameState.teamBonus[teamKey] = (gameState.teamBonus[teamKey] || 0) + amount;
             gameState.scores[teamKey] += amount; 
+            if (amount < 0) {
+                // If needed, can emit penalty news here
+            }
             saveGameState(); updateDisplay(); 
         }
 
@@ -926,6 +1167,7 @@
                         <div class="member-info">
                             <div class="m-name">${member.name}</div>
                             <div class="m-skill">${member.skill}</div>
+                            <button class="add-btn" style="width:100%; padding: 6px 2px; margin-top: 8px; font-size: 0.85em; letter-spacing: -0.5px; white-space: nowrap; background: #2ecc71; border-color: #27ae60;" onclick="verifyAndUpload('${teamKey}', ${index})">출석인증</button>
                         </div>
                     `;
                     membersWrap.appendChild(memberCard);
@@ -971,7 +1213,49 @@
             if (confirm(`[${rosterData.members[teamKey][index].name}]의 비밀번호를 초기화(삭제) 하시겠습니까?`)) {
                 rosterData.members[teamKey][index].userPwd = '';
                 saveRosterData();
+                uploadToServer(false); // 자동으로 구글 시트에 업데이트
                 alert("비밀번호가 초기화되었습니다.");
+            }
+        }
+
+        let isMobileMode = false;
+        function toggleMobileMode() {
+            isMobileMode = !isMobileMode;
+            const grid = document.getElementById('grid-container');
+            const leftPanel = document.getElementById('left-panel');
+            const topPanel = document.getElementById('top-panel');
+            const btn = document.getElementById('mobile-mode-btn');
+            const roster = document.getElementById('roster-container');
+
+            if (isMobileMode) {
+                document.body.style.minWidth = 'auto'; 
+                document.body.style.padding = '10px';
+                grid.style.display = 'none';
+                leftPanel.style.display = 'none';
+                topPanel.style.display = 'none'; // 어드민바, 상황판 모두 숨김
+
+                // 로스터 컨테이너를 가로정렬에서 세로정렬로
+                roster.style.flex = 'none';
+                roster.style.width = '100%';
+
+                btn.innerText = '💻 전체 지도판(PC)로 돌아가기';
+                btn.style.background = '#3498db';
+                btn.style.borderColor = '#2980b9';
+            } else {
+                document.body.style.minWidth = '1600px';
+                document.body.style.padding = '20px';
+                
+                // 모바일 모드 해제 시 인라인 스타일 초기화하여 기존 CSS 적용되도록 복구
+                grid.style.display = '';
+                leftPanel.style.display = '';
+                topPanel.style.display = '';
+                
+                roster.style.flex = '';
+                roster.style.width = '';
+
+                btn.innerText = '📱 모바일 출석 전용 화면 전환';
+                btn.style.background = '#e056fd';
+                btn.style.borderColor = '#be2edd';
             }
         }
 
@@ -985,7 +1269,8 @@
                 if (!newPwd) return;
                 member.userPwd = newPwd;
                 saveRosterData();
-                alert("비밀번호가 설정되었습니다! 다시 [📷 출석인증] 버튼을 눌러주세요.");
+                uploadToServer(false); // 자동으로 구글 시트에 업데이트
+                alert("비밀번호가 서버에 안전하게 설정되었습니다! 다시 [출석인증] 버튼을 눌러주세요.");
                 return;
             }
             
@@ -1092,81 +1377,30 @@
             }
         }
 
-        /** 출석 API: [ { "name": "...", "attendance_count": N }, ... ] — 멤버 attendance와 동일한 만큼 gameState.scores[팀] 조정 */
-        function applyAttendanceSummaryToRoster(rosterData, rawAttendanceJson, gameState) {
-            var rows = Array.isArray(rawAttendanceJson) ? rawAttendanceJson : [];
-            var byName = new Map();
-            for (var i = 0; i < rows.length; i++) {
-                var row = rows[i];
-                if (typeof row !== 'object' || row === null) continue;
-                var nm = row.name != null ? String(row.name).trim() : '';
-                if (!nm) continue;
-                var ac = row.attendance_count;
-                if (ac === undefined || ac === null) continue;
-                var val = typeof ac === 'number' ? ac : parseInt(String(ac), 10);
-                if (isNaN(val)) continue;
-                byName.set(nm, val);
-            }
-            if (!rosterData || !rosterData.members) return;
-            teamKeys.forEach(function(teamKey) {
-                var list = rosterData.members[teamKey];
-                if (!Array.isArray(list)) return;
-                list.forEach(function(m) {
-                    if (!m || typeof m.name !== 'string') return;
-                    var key = m.name.trim();
-                    if (!byName.has(key)) return;
-                    var newVal = byName.get(key);
-                    var oldVal = m.attendance || 0;
-                    var diff = newVal - oldVal;
-                    m.attendance = newVal;
-                    if (gameState && gameState.scores) {
-                        var cur = gameState.scores[teamKey];
-                        if (typeof cur !== 'number' || isNaN(cur)) cur = 0;
-                        gameState.scores[teamKey] = cur + diff;
-                    }
-                });
-            });
-        }
-
         window.onload = async function() {
             if(SERVER_URL !== '웹앱URL을_여기에_붙여넣으세요' && SERVER_URL !== '') {
                 showLoading('서버에서 최신 게임판을 연동 중입니다...');
                 try {
-                    var results = await Promise.allSettled([
-                        fetch('https://kuuki-jp.com:8956/api/attendance/summary-by-user', { method: 'GET' }),
-                        fetch(SERVER_URL + '?action=load', { method: 'GET', redirect: 'follow' })
-                    ]);
-                    var attendanceJson = null;
-                    if (results[0].status === 'fulfilled' && results[0].value.ok) {
-                        try { attendanceJson = await results[0].value.json(); } catch (e) { console.log('출석 API JSON 파싱 실패:', e); }
-                    } else if (results[0].status === 'rejected') {
-                        console.log('출석 API 요청 실패:', results[0].reason);
-                    }
-
-                    var loadedData = null;
-                    if (results[1].status === 'fulfilled' && results[1].value.ok) {
-                        try { loadedData = await results[1].value.json(); } catch (e) { console.log('게임 서버 JSON 파싱 실패:', e); }
-                    } else if (results[1].status === 'rejected') {
-                        console.log('게임 서버 요청 실패:', results[1].reason);
-                    }
-
-                    if (loadedData && loadedData.gameState && loadedData.rosterData) {
-                        if (attendanceJson) {
-                            applyAttendanceSummaryToRoster(loadedData.rosterData, attendanceJson, loadedData.gameState);
-                        }
+                    const response = await fetch(`${SERVER_URL}?action=load`, {
+                        method: 'GET',
+                        redirect: 'follow'
+                    });
+                    const loadedData = await response.json();
+                    
+                    if (loadedData.gameState && loadedData.rosterData) {
                         safeSet(STORAGE_KEY_GAME, JSON.stringify(loadedData.gameState));
                         safeSet(STORAGE_KEY_ROSTER, JSON.stringify(loadedData.rosterData));
                         safeSet(STORAGE_KEY_TERR, JSON.stringify(loadedData.territories || []));
-                        console.log('✅ 서버 최신 데이터 자동 동기화 완료' + (attendanceJson ? ' (출석 반영)' : ''));
+                        console.log("✅ 서버 최신 데이터 자동 동기화 완료");
                     }
                 } catch(e) {
-                    console.log('⚠️ 자동 동기화 실패 (기존 로컬 데이터 통상 접속):', e);
+                    console.log("⚠️ 자동 동기화 실패 (기존 로컬 데이터 통상 접속):", e);
                 } finally {
                     hideLoading();
-                    initGame();
+                    initGame(); // 데이터 동기화 완료 후 화면 구성
                 }
             } else {
-                initGame();
+                initGame(); // 서버 주소가 없으면 바로 로컬 데이터로 시작
             }
         };
     </script>
