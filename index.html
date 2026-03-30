@@ -1381,26 +1381,41 @@
             if(SERVER_URL !== '웹앱URL을_여기에_붙여넣으세요' && SERVER_URL !== '') {
                 showLoading('서버에서 최신 게임판을 연동 중입니다...');
                 try {
-                    const response = await fetch(`${SERVER_URL}?action=load`, {
-                        method: 'GET',
-                        redirect: 'follow'
-                    });
-                    const loadedData = await response.json();
-                    
-                    if (loadedData.gameState && loadedData.rosterData) {
+                    var results = await Promise.allSettled([
+                        fetch('https://kuuki-jp.com:8956/api/attendance/summary-by-user', { method: 'GET' }),
+                        fetch(SERVER_URL + '?action=load', { method: 'GET', redirect: 'follow' })
+                    ]);
+                    var attendanceJson = null;
+                    if (results[0].status === 'fulfilled' && results[0].value.ok) {
+                        try { attendanceJson = await results[0].value.json(); } catch (e) { console.log('출석 API JSON 파싱 실패:', e); }
+                    } else if (results[0].status === 'rejected') {
+                        console.log('출석 API 요청 실패:', results[0].reason);
+                    }
+
+                    var loadedData = null;
+                    if (results[1].status === 'fulfilled' && results[1].value.ok) {
+                        try { loadedData = await results[1].value.json(); } catch (e) { console.log('게임 서버 JSON 파싱 실패:', e); }
+                    } else if (results[1].status === 'rejected') {
+                        console.log('게임 서버 요청 실패:', results[1].reason);
+                    }
+
+                    if (loadedData && loadedData.gameState && loadedData.rosterData) {
+                        if (attendanceJson) {
+                            applyAttendanceSummaryToRoster(loadedData.rosterData, attendanceJson, loadedData.gameState);
+                        }
                         safeSet(STORAGE_KEY_GAME, JSON.stringify(loadedData.gameState));
                         safeSet(STORAGE_KEY_ROSTER, JSON.stringify(loadedData.rosterData));
                         safeSet(STORAGE_KEY_TERR, JSON.stringify(loadedData.territories || []));
-                        console.log("✅ 서버 최신 데이터 자동 동기화 완료");
+                        console.log('✅ 서버 최신 데이터 자동 동기화 완료' + (attendanceJson ? ' (출석 반영)' : ''));
                     }
                 } catch(e) {
-                    console.log("⚠️ 자동 동기화 실패 (기존 로컬 데이터 통상 접속):", e);
+                    console.log('⚠️ 자동 동기화 실패 (기존 로컬 데이터 통상 접속):', e);
                 } finally {
                     hideLoading();
-                    initGame(); // 데이터 동기화 완료 후 화면 구성
+                    initGame();
                 }
             } else {
-                initGame(); // 서버 주소가 없으면 바로 로컬 데이터로 시작
+                initGame();
             }
         };
     </script>
