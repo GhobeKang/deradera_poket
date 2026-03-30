@@ -1377,6 +1377,42 @@
             }
         }
 
+        /** 출석 API: [ { "name": "...", "attendance_count": N }, ... ] — 멤버 attendance와 동일한 만큼 gameState.scores[팀] 조정 */
+        function applyAttendanceSummaryToRoster(rosterData, rawAttendanceJson, gameState) {
+            var rows = Array.isArray(rawAttendanceJson) ? rawAttendanceJson : [];
+            var byName = new Map();
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                if (typeof row !== 'object' || row === null) continue;
+                var nm = row.name != null ? String(row.name).trim() : '';
+                if (!nm) continue;
+                var ac = row.attendance_count;
+                if (ac === undefined || ac === null) continue;
+                var val = typeof ac === 'number' ? ac : parseInt(String(ac), 10);
+                if (isNaN(val)) continue;
+                byName.set(nm, val);
+            }
+            if (!rosterData || !rosterData.members) return;
+            teamKeys.forEach(function(teamKey) {
+                var list = rosterData.members[teamKey];
+                if (!Array.isArray(list)) return;
+                list.forEach(function(m) {
+                    if (!m || typeof m.name !== 'string') return;
+                    var key = m.name.trim();
+                    if (!byName.has(key)) return;
+                    var newVal = byName.get(key);
+                    var oldVal = m.attendance || 0;
+                    var diff = newVal - oldVal;
+                    m.attendance = newVal;
+                    if (gameState && gameState.scores) {
+                        var cur = gameState.scores[teamKey];
+                        if (typeof cur !== 'number' || isNaN(cur)) cur = 0;
+                        gameState.scores[teamKey] = cur + diff;
+                    }
+                });
+            });
+        }
+        
         window.onload = async function() {
             if(SERVER_URL !== '웹앱URL을_여기에_붙여넣으세요' && SERVER_URL !== '') {
                 showLoading('서버에서 최신 게임판을 연동 중입니다...');
