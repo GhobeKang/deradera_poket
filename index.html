@@ -190,8 +190,10 @@
                 <button id="btn-team-b" class="team-b" onclick="selectTeam('B')">💧 블루 (B)</button>
                 <button id="btn-team-c" class="team-c" onclick="selectTeam('C')">🌿 그린 (C)</button>
                 
-                <button id="editor-mode-btn" style="margin-left: 15px;" onclick="toggleEditorMode()">🛠️ 땅 수정 모드 OFF</button>
-                <button id="move-mode-btn" onclick="toggleMoveMode()">♟️ 말 перемещение Мо드 OFF</button>
+                <button id="editor-mode-btn" style="margin-left: 15px;" onclick="toggleEditorMode()">🛠️ 개발자모드 OFF</button>
+                <button id="editor-poison-btn" class="editor-sub-btn" style="display:none; margin-left: 5px; background:#8e44ad; color:white; border-color:#5b2c6f; padding:5px 10px; border-radius:5px;" onclick="setEditorSubMode('poison')">☠️ 독안개</button>
+                <button id="editor-arson-btn" class="editor-sub-btn" style="display:none; margin-left: 5px; background:#e74c3c; color:white; border-color:#c0392b; padding:5px 10px; border-radius:5px;" onclick="setEditorSubMode('arson')">🔥 불지르기</button>
+                <button id="move-mode-btn" style="margin-left:15px;" onclick="toggleMoveMode()">♟️ 말 이동 모드 OFF</button>
 
                 <!-- 관리자용 구글 연동 버튼 추가 -->
                 <button onclick="uploadToServer(true)" style="background: #e74c3c; color: white; border-color: #c0392b; margin-left: 15px; box-shadow: 0 0 10px #e74c3c;">⏫ 현재 상태를 서버(구글)에 저장하기</button>
@@ -213,21 +215,24 @@
                 <span id="score-a" class="team-stats">0</span> 점 <br>
                 <div class="bonus-text" id="bonus-a"></div>
                 <span style="font-size:0.9em; color:#ccc;">남은 P: <strong style="color:#f1c40f;" id="points-a" onclick="editPoints('A')">0</strong></span>
-                <button class="add-btn team-bonus-btn" style="display:none; margin-left:10px;" onclick="addPoints('A', 1)">+1P (팀보너스)</button>
+                <button class="add-btn team-bonus-btn" style="display:none; margin-left:10px; padding:2px 6px; font-size:0.8em;" onclick="addPoints('A', -1)">-1P</button>
+                <button class="add-btn team-bonus-btn" style="display:none; margin-left:5px; padding:2px 6px; font-size:0.8em;" onclick="addPoints('A', 1)">+1P (팀보너스)</button>
             </div>
             <div class="team-info team-b">
                 💧 <span id="team-name-b" style="font-size:1.1em; font-weight:bold;">블루</span> <br>
                 <span id="score-b" class="team-stats">0</span> 점 <br>
                 <div class="bonus-text" id="bonus-b"></div>
                 <span style="font-size:0.9em; color:#ccc;">남은 P: <strong style="color:#f1c40f;" id="points-b" onclick="editPoints('B')">0</strong></span>
-                <button class="add-btn team-bonus-btn" style="display:none; margin-left:10px;" onclick="addPoints('B', 1)">+1P (팀보너스)</button>
+                <button class="add-btn team-bonus-btn" style="display:none; margin-left:10px; padding:2px 6px; font-size:0.8em;" onclick="addPoints('B', -1)">-1P</button>
+                <button class="add-btn team-bonus-btn" style="display:none; margin-left:5px; padding:2px 6px; font-size:0.8em;" onclick="addPoints('B', 1)">+1P (팀보너스)</button>
             </div>
             <div class="team-info team-c">
                 🌿 <span id="team-name-c" style="font-size:1.1em; font-weight:bold;">그린</span> <br>
                 <span id="score-c" class="team-stats">0</span> 점 <br>
                 <div class="bonus-text" id="bonus-c"></div>
                 <span style="font-size:0.9em; color:#ccc;">남은 P: <strong style="color:#f1c40f;" id="points-c" onclick="editPoints('C')">0</strong></span>
-                <button class="add-btn team-bonus-btn" style="display:none; margin-left:10px;" onclick="addPoints('C', 1)">+1P (팀보너스)</button>
+                <button class="add-btn team-bonus-btn" style="display:none; margin-left:10px; padding:2px 6px; font-size:0.8em;" onclick="addPoints('C', -1)">-1P</button>
+                <button class="add-btn team-bonus-btn" style="display:none; margin-left:5px; padding:2px 6px; font-size:0.8em;" onclick="addPoints('C', 1)">+1P (팀보너스)</button>
             </div>
         </div>
     </div>
@@ -542,6 +547,18 @@
             const wrap = document.getElementById('skill-modal-content');
             wrap.innerHTML = '';
             
+            const evoGuide = document.createElement('div');
+            evoGuide.style.cssText = 'background: #fff; border: 2px solid #34495e; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 1.05em; line-height: 1.6; color: #2c3e50; font-weight: bold; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+            evoGuide.innerHTML = `
+                <div style="color: #c0392b;">[2진화 포켓몬]</div>
+                <div>1차 진화 - 출석 30</div>
+                <div style="margin-bottom: 15px;">최종 진화 - 출석 60</div>
+                
+                <div style="color: #2980b9;">[1진화 포켓몬]</div>
+                <div>최종 진화 - 출석 45</div>
+            `;
+            wrap.appendChild(evoGuide);
+
             // 데이터 설정: 유저의 이름이나 스킬에 키워드가 포함되어 있으면 일치시킴
             const pokemonDict = [
                 { keys: ["홍이시", "케이시", "홍겔라", "홍딘"], pokeName: "케이시", sprite: "63", title: "위치 조작 (상대방과 위치 변경)", evos: [
@@ -690,15 +707,30 @@
             renderNews();
         }
 
+        function deleteNews(idx) {
+            if (!gameState.editorMode) return;
+            if (confirm("이 전광판 기록을 정말 삭제하시겠습니까? (알림줄만 삭제되며, 잘못 올라간 점수나 영토가 예전으로 복구되지는 않습니다)")) {
+                gameState.newsList.splice(idx, 1);
+                saveGameState();
+                renderNews();
+            }
+        }
+
         function renderNews() {
             const board = document.getElementById('news-list');
             if(!board) return;
             board.innerHTML = '';
             const teamColors = { 'A': '#ff6b6b', 'B': '#48dbfb', 'C': '#1dd1a1' };
-            (gameState.newsList || []).forEach(news => {
+            (gameState.newsList || []).forEach((news, idx) => {
                 const li = document.createElement('li');
                 const teamName = (rosterData && rosterData.teamNames && rosterData.teamNames[news.teamKey]) ? rosterData.teamNames[news.teamKey] : news.teamKey + '팀';
-                li.innerHTML = `<span style="color:#aaa; font-size:0.85em; letter-spacing:-0.5px;">[${news.time}]</span> <strong style="color:${teamColors[news.teamKey]}; font-size:0.95em;">${emblems['home'+news.teamKey]} ${teamName}</strong><br> <span style="padding-left:14px; display:inline-block; margin-top:4px; font-size:0.9em;">${news.message}</span>`;
+                
+                let delBtn = '';
+                if (gameState.editorMode) {
+                    delBtn = `<button onclick="deleteNews(${idx})" style="float:right; margin-top:-2px; background:#c0392b; color:white; border:none; border-radius:4px; padding:2px 6px; cursor:pointer; font-size:0.8em; font-weight:bold;">삭제 ✖</button>`;
+                }
+                
+                li.innerHTML = `<span style="color:#aaa; font-size:0.85em; letter-spacing:-0.5px;">[${news.time}]</span> <strong style="color:${teamColors[news.teamKey]}; font-size:0.95em;">${emblems['home'+news.teamKey]} ${teamName}</strong> ${delBtn}<br> <span style="padding-left:14px; display:inline-block; margin-top:4px; font-size:0.9em; line-height:1.4;">${news.message}</span>`;
                 board.appendChild(li);
             });
         }
@@ -720,7 +752,7 @@
                         if(gameState.customImgs[key] === undefined) gameState.customImgs[key] = defaultImgs[key];
                     }
                 }
-                gameState.editorMode = false; gameState.moveMode = false; 
+                gameState.editorMode = false; gameState.moveMode = false; gameState.editorSubMode = 'claim';
             } else saveGameState();
         }
         function saveGameState() { safeSet(STORAGE_KEY_GAME, JSON.stringify(gameState)); }
@@ -796,7 +828,7 @@
         function getPieceContent(team) {
             const imgUrl = gameState.homeImgs[team];
             const defaultEmoji = emblems['home'+team];
-            let inner = imgUrl ? `<div style="width: 36px; height: 36px; border-radius: 50%; background-image: url('${imgUrl}'); background-size: cover; background-position: center; border: 1px solid rgba(22,22,37,0.5);"></div>` : `<span style="font-size: 20px; z-index: 2;">${defaultEmoji}</span>`;
+            let inner = imgUrl ? `<div style="width: 36px; height: 36px; border-radius: 50%; background-color: #fff; background-image: url('${imgUrl}'); background-size: cover; background-position: center; border: 1px solid rgba(22,22,37,0.5);"></div>` : `<span style="font-size: 20px; z-index: 2;">${defaultEmoji}</span>`;
             return `${inner}<div class="home-edit-wrap" onclick="editHomeImg('${team}', event)" title="말 이미지 변경">🔄</div>`;
         }
 
@@ -873,6 +905,13 @@
 
         function renderPieces() {
             document.querySelectorAll('.game-piece').forEach(p => p.remove());
+            
+            const teamColors = {
+                'A': { bg: '#ff7675', border: '#c0392b', shadow: '#e74c3c' },
+                'B': { bg: '#74b9ff', border: '#2980b9', shadow: '#3498db' },
+                'C': { bg: '#55efc4', border: '#27ae60', shadow: '#2ecc71' }
+            };
+
             ['A', 'B', 'C'].forEach(team => {
                 const pos = gameState.piecePositions[team];
                 if(!pos) return;
@@ -880,6 +919,12 @@
                 if(targetCell) {
                     const piece = document.createElement('div');
                     piece.className = 'game-piece';
+                    
+                    // 팀별 배경색 및 테두리/그림자 효과 적용
+                    piece.style.backgroundColor = teamColors[team].bg;
+                    piece.style.borderColor = teamColors[team].border;
+                    piece.style.boxShadow = `inset 0 -4px 6px rgba(0,0,0,0.3), 0 5px 0 ${teamColors[team].shadow}, 0 10px 10px rgba(0,0,0,0.6)`;
+                    
                     piece.innerHTML = getPieceContent(team);
                     piece.addEventListener('click', (e) => { if(e.target.className !== 'home-edit-wrap') targetCell.click(); });
                     targetCell.appendChild(piece);
@@ -920,22 +965,50 @@
         }
 
         function toggleEditorMode() {
-            gameState.editorMode = !gameState.editorMode; gameState.moveMode = false; 
-            updateTopButtons(); renderRoster(); 
+            gameState.editorMode = !gameState.editorMode; 
+            if (gameState.editorMode) gameState.editorSubMode = 'claim';
+            gameState.moveMode = false; 
+            updateTopButtons(); renderRoster(); updateDisplay(); renderNews();
+        }
+
+        function setEditorSubMode(mode) {
+            if (!gameState.editorMode) return;
+            gameState.editorSubMode = mode;
+            updateTopButtons(); updateDisplay();
         }
 
         function toggleMoveMode() {
             gameState.moveMode = !gameState.moveMode; gameState.editorMode = false; 
-            updateTopButtons(); renderRoster();
+            updateTopButtons(); renderRoster(); updateDisplay();
         }
 
         function updateTopButtons() {
             const editBtn = document.getElementById('editor-mode-btn');
+            const poisonBtn = document.getElementById('editor-poison-btn');
+            const arsonBtn = document.getElementById('editor-arson-btn');
             const moveBtn = document.getElementById('move-mode-btn');
-            if (gameState.editorMode) { editBtn.innerText = '🛠️ Эди터 Мо드 ON'; editBtn.classList.add('active'); document.querySelectorAll('.team-bonus-btn').forEach(btn => btn.style.display = 'inline-block');} 
-            else { editBtn.innerText = '🛠️ 땅 수정 모드 OFF'; editBtn.classList.remove('active'); document.querySelectorAll('.team-bonus-btn').forEach(btn => btn.style.display = 'none');}
+            
+            if (gameState.editorMode) { 
+                editBtn.innerText = '🛠️ 개발자모드 ON'; 
+                editBtn.classList.toggle('active', gameState.editorSubMode === 'claim');
+                if (poisonBtn) {
+                    poisonBtn.style.display = 'inline-block';
+                    poisonBtn.style.opacity = gameState.editorSubMode === 'poison' ? '1' : '0.4';
+                }
+                if (arsonBtn) {
+                    arsonBtn.style.display = 'inline-block';
+                    arsonBtn.style.opacity = gameState.editorSubMode === 'arson' ? '1' : '0.4';
+                }
+                document.querySelectorAll('.team-bonus-btn').forEach(btn => btn.style.display = 'inline-block');
+            } else { 
+                editBtn.innerText = '🛠️ 개발자모드 OFF'; 
+                editBtn.classList.remove('active'); 
+                if (poisonBtn) poisonBtn.style.display = 'none';
+                if (arsonBtn) arsonBtn.style.display = 'none';
+                document.querySelectorAll('.team-bonus-btn').forEach(btn => btn.style.display = 'none');
+            }
 
-            if (gameState.moveMode) { moveBtn.innerText = '♟️ 말 이동 Мо드 ON (클릭 시 이동)'; moveBtn.classList.add('active'); } 
+            if (gameState.moveMode) { moveBtn.innerText = '♟️ 말 이동 모드 ON (클릭 시 이동)'; moveBtn.classList.add('active'); } 
             else { moveBtn.innerText = '♟️ 말 이동 모드 OFF'; moveBtn.classList.remove('active'); }
             saveGameState();
         }
@@ -946,6 +1019,21 @@
                 saveGameState(); renderPieces(); return;
             }
             if (gameState.editorMode) {
+                const coords = `${r},${c}`;
+                if (gameState.editorSubMode === 'poison' || gameState.editorSubMode === 'arson') {
+                    if (!gameState.effects) gameState.effects = {};
+                    
+                    if (gameState.effects[coords] && gameState.effects[coords].type === gameState.editorSubMode) {
+                        delete gameState.effects[coords]; // 클릭 시 해제
+                    } else {
+                        const now = new Date();
+                        now.setDate(now.getDate() + 3);
+                        now.setHours(0,0,0,0); // 3일 뒤 자정(00시)
+                        gameState.effects[coords] = { type: gameState.editorSubMode, expireAt: now.getTime() };
+                    }
+                    saveGameState(); updateDisplay(); return;
+                }
+
                 const isOwnedBySelectedTeam = cellEl.classList.contains(`owned-${gameState.selectedTeam.toLowerCase()}`);
                 const isLocked = cellEl.classList.contains('locked');
                 if (isOwnedBySelectedTeam && isLocked) { clearTile(cellEl); } 
@@ -1052,7 +1140,7 @@
         }
 
         function editPoints(teamKey) {
-            if (!gameState.editorMode) { alert("포인트를 수동 조작하려면 상단의 '🛠️ Эди터 모드'를 켜주세요!"); return; }
+            if (!gameState.editorMode) { alert("포인트를 수동 조작하려면 상단의 '🛠️ 개발자모드'를 켜주세요!"); return; }
             const currentPoints = gameState.scores[teamKey];
             const newPoints = prompt(`${rosterData.teamNames[teamKey]}의 남은 포인트를 직접 수정합니다:`, currentPoints);
             if (newPoints !== null && !isNaN(newPoints) && newPoints.trim() !== '') {
@@ -1129,6 +1217,64 @@
 
                 document.getElementById(`bonus-${teamKey.toLowerCase()}`).innerText = bonusMessage.join(" | ");
             });
+            renderEffects();
+        }
+
+        function renderEffects() {
+            document.querySelectorAll('.cell-effect').forEach(el => el.remove());
+            if (!gameState.effects) return;
+            
+            const now = Date.now();
+            let changed = false;
+            
+            for (let coords in gameState.effects) {
+                const effect = gameState.effects[coords];
+                if (now >= effect.expireAt) {
+                    delete gameState.effects[coords];
+                    changed = true;
+                    continue;
+                }
+                
+                const r = coords.split(',')[0];
+                const c = coords.split(',')[1];
+                const cell = document.getElementById(`cell-${r}-${c}`);
+                if (!cell) continue;
+
+                const el = document.createElement('div');
+                el.className = 'cell-effect';
+                el.style.position = 'absolute';
+                el.style.top = '50%'; el.style.left = '50%';
+                el.style.transform = 'translate(-50%, -50%)';
+                el.style.zIndex = '22';
+                el.style.pointerEvents = 'none';
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+
+                if (effect.type === 'poison') {
+                    if (gameState.editorMode) {
+                        el.innerHTML = '☠️독안개';
+                        el.style.color = '#fff';
+                        el.style.background = 'rgba(142, 68, 173, 0.85)';
+                        el.style.fontSize = '10px';
+                        el.style.fontWeight = 'bold';
+                        el.style.padding = '2px 4px';
+                        el.style.borderRadius = '5px';
+                        el.style.width = 'max-content';
+                        cell.appendChild(el);
+                    }
+                } else if (effect.type === 'arson') {
+                    el.innerHTML = '🔥';
+                    el.style.fontSize = '22px';
+                    el.style.background = 'rgba(231, 76, 60, 0.4)';
+                    el.style.width = '26px';
+                    el.style.height = '26px';
+                    el.style.borderRadius = '50%';
+                    el.style.textShadow = '0 0 5px #e74c3c';
+                    cell.appendChild(el);
+                }
+            }
+            if (changed) saveGameState();
         }
 
         function renderRoster() {
