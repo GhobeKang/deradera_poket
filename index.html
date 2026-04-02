@@ -193,6 +193,7 @@
                 <button id="editor-mode-btn" style="margin-left: 15px;" onclick="toggleEditorMode()">🛠️ 개발자모드 OFF</button>
                 <button id="editor-poison-btn" class="editor-sub-btn" style="display:none; margin-left: 5px; background:#8e44ad; color:white; border-color:#5b2c6f; padding:5px 10px; border-radius:5px;" onclick="setEditorSubMode('poison')">☠️ 독안개</button>
                 <button id="editor-arson-btn" class="editor-sub-btn" style="display:none; margin-left: 5px; background:#e74c3c; color:white; border-color:#c0392b; padding:5px 10px; border-radius:5px;" onclick="setEditorSubMode('arson')">🔥 불지르기</button>
+                <button id="editor-shield-btn" class="editor-sub-btn" style="display:none; margin-left: 5px; background:#3498db; color:white; border-color:#2980b9; padding:5px 10px; border-radius:5px;" onclick="setEditorSubMode('shield')">🛡️ 방어막</button>
                 <button id="move-mode-btn" style="margin-left:15px;" onclick="toggleMoveMode()">♟️ 말 이동 모드 OFF</button>
 
                 <!-- 관리자용 구글 연동 버튼 추가 -->
@@ -576,19 +577,19 @@
                     { r: "👑", n: "마기엽움", d: "상대방을 내 주변 원하는 곳으로 강제 소환!" }
                 ]},
                 { keys: ["규뇽", "미뇽", "신규", "망규뇽"], pokeName: "미뇽", sprite: "147", title: "기가드레인 (적 출석 뺏어 아군 주머니로)", evos: [
-                    { r: "🔹", n: "규뇽", d: "4포인트로 발동" },
-                    { r: "🔹", n: "신규", d: "6포인트 (상대 각 팀 3점씩 강탈)" },
-                    { r: "👑", n: "망규뇽", d: "10포인트 (상대 각 팀 5점씩 강탈)" }
+                    { r: "🔹", n: "규뇽", d: "4포인트 흡수 및 나눔" },
+                    { r: "🔹", n: "신규", d: "6포인트 흡수 및 나눔 (상대 팀 각 3점씩 강탈)" },
+                    { r: "👑", n: "망규뇽", d: "10포인트 흡수 및 나눔 (상대 팀 각 5점씩 강탈)" }
                 ]},
-                { keys: ["틍", "삐", "삐틍", "픽틍"], pokeName: "삐", sprite: "173", title: "치어리더 (3일간 팀원 출석 추가)", evos: [
-                    { r: "🔹", n: "틍", d: "출석 추가 +1" },
-                    { r: "🔹", n: "삐틍", d: "출석 추가 +2" },
-                    { r: "👑", n: "픽틍", d: "출석 획득량 2배!", req: "달의 돌 - 로켓단 4개 구역 요새화" }
+                { keys: ["틍", "삐", "삐틍", "픽틍"], pokeName: "삐", sprite: "173", title: "치어리더 (팀 출석 추가버프)", evos: [
+                    { r: "🔹", n: "틍", d: "팀원들에게 +1출석" },
+                    { r: "🔹", n: "삐틍", d: "팀원들에게 +2출석" },
+                    { r: "👑", n: "픽틍", d: "팀원들 3일간 출석 2배" }
                 ]},
                 { keys: ["야봉", "야돈", "야봉란", "야봉킹"], pokeName: "야돈", sprite: "79", title: "기억 조작 (포인트 획득량 펌핑)", evos: [
-                    { r: "🔹", n: "야봉", d: "포인트 획득 2배" },
-                    { r: "🔹", n: "야봉란", d: "포인트 획득 3배" },
-                    { r: "👑", n: "야봉킹", d: "포인트 획득 3배 + 1명 나눔 가능!", req: "왕의 징표석 - 아르세우스 요새화 달성" }
+                    { r: "🔹", n: "야봉", d: "개인 포인트 2배 획득 (3일)" },
+                    { r: "🔹", n: "야봉란", d: "개인 포인트 3배 획득 (3일)" },
+                    { r: "👑", n: "야봉킹", d: "개인 포인트 획득 3배 획득 + 1명에게 나눔" }
                 ]},
                 { keys: ["냐오신", "냐오불", "냐옹불", "냐오신이", "신이염"], pokeName: "냐오불", sprite: "727", title: "불지르기 (빈 구역 접근 금지)", evos: [
                     { r: "🔹", n: "냐오신", d: "1칸 불지르기" },
@@ -599,15 +600,15 @@
                     { r: "🔹", n: "백호스", d: "1칸 독안개 설치" },
                     { r: "👑", n: "또백호스", d: "2칸 독안개 설치" }
                 ]},
-                { keys: ["메타몽"], pokeName: "메타몽", sprite: "132", title: "메타몽 (복사기)", evos: [
-                    { r: "👑", n: "메타몽", d: "7번 출석마다 다른 스킬 1회 카피!", req: "팀원 출석 효과 못 받음. 진화 없음" }
+                { keys: ["메타몽", "매택몽"], pokeName: "메타몽", sprite: "132", title: "메타몽 (복사복사몽몽)", evos: [
+                    { r: "👑", n: "매택몽", d: "7번 출석마다 다른스킬 1회 복사해서 사용가능.", req: "조건:팀원 출석 효과 못 받음. 자신의 출석 수에 맞는 출석레벨 스킬만 복사 가능. 진화 없음" }
                 ]},
-                { keys: ["꼬무기", "꼬부기", "언니무기", "무송왕"], pokeName: "꼬부기", sprite: "7", title: "단단해지기 (내 주변 구역 무적&해제)", evos: [
-                    { r: "🔹", n: "꼬무기", d: "1칸 방어" },
-                    { r: "🔹", n: "언니무기", d: "2칸 방어" },
-                    { r: "👑", n: "무송왕", d: "3칸 방어" }
+                { keys: ["꼬무기", "꼬부기", "언니무기", "무송왕"], pokeName: "꼬부기", sprite: "7", title: "단단해지기 (주변 구역 cc기 해제 및 무적)", evos: [
+                    { r: "🔹", n: "꼬무기", d: "1칸 (3일)" },
+                    { r: "🔹", n: "언니무기", d: "2칸 (3일)" },
+                    { r: "👑", n: "무송왕", d: "3칸 (3일)" }
                 ]},
-                { keys: ["고베파덕", "고라파덕", "고덕"], pokeName: "고라파덕", sprite: "54", title: "최면 (부동산 환불 보장)", evos: [
+                { keys: ["고베파덕", "고라파덕", "고덕"], pokeName: "고라파덕", sprite: "54", title: "최면 (적이 강탈했을때 100% 환불)", evos: [
                     { r: "🔹", n: "고베파덕", d: "1칸 적용" },
                     { r: "👑", n: "고덕", d: "3칸 적용", req: "물의 돌 - 프리저 요새화 달성" }
                 ]},
@@ -986,6 +987,7 @@
             const editBtn = document.getElementById('editor-mode-btn');
             const poisonBtn = document.getElementById('editor-poison-btn');
             const arsonBtn = document.getElementById('editor-arson-btn');
+            const shieldBtn = document.getElementById('editor-shield-btn');
             const moveBtn = document.getElementById('move-mode-btn');
             
             if (gameState.editorMode) { 
@@ -999,12 +1001,17 @@
                     arsonBtn.style.display = 'inline-block';
                     arsonBtn.style.opacity = gameState.editorSubMode === 'arson' ? '1' : '0.4';
                 }
+                if (shieldBtn) {
+                    shieldBtn.style.display = 'inline-block';
+                    shieldBtn.style.opacity = gameState.editorSubMode === 'shield' ? '1' : '0.4';
+                }
                 document.querySelectorAll('.team-bonus-btn').forEach(btn => btn.style.display = 'inline-block');
             } else { 
                 editBtn.innerText = '🛠️ 개발자모드 OFF'; 
                 editBtn.classList.remove('active'); 
                 if (poisonBtn) poisonBtn.style.display = 'none';
                 if (arsonBtn) arsonBtn.style.display = 'none';
+                if (shieldBtn) shieldBtn.style.display = 'none';
                 document.querySelectorAll('.team-bonus-btn').forEach(btn => btn.style.display = 'none');
             }
 
@@ -1020,7 +1027,7 @@
             }
             if (gameState.editorMode) {
                 const coords = `${r},${c}`;
-                if (gameState.editorSubMode === 'poison' || gameState.editorSubMode === 'arson') {
+                if (gameState.editorSubMode === 'poison' || gameState.editorSubMode === 'arson' || gameState.editorSubMode === 'shield') {
                     if (!gameState.effects) gameState.effects = {};
                     
                     if (gameState.effects[coords] && gameState.effects[coords].type === gameState.editorSubMode) {
@@ -1272,6 +1279,15 @@
                     el.style.borderRadius = '50%';
                     el.style.textShadow = '0 0 5px #e74c3c';
                     cell.appendChild(el);
+                } else if (effect.type === 'shield') {
+                    el.innerHTML = '🛡️';
+                    el.style.fontSize = '22px';
+                    el.style.background = 'rgba(52, 152, 219, 0.4)';
+                    el.style.width = '26px';
+                    el.style.height = '26px';
+                    el.style.borderRadius = '50%';
+                    el.style.textShadow = '0 0 5px #3498db';
+                    cell.appendChild(el);
                 }
             }
             if (changed) saveGameState();
@@ -1301,9 +1317,20 @@
                 container.appendChild(teamWrap);
 
                 const membersWrap = document.getElementById(`members-wrap-${teamKey}`);
+                
+                const today = new Date().getDay(); // 0(Sun) ~ 6(Sat)
+                const playIndex = (today >= 1 && today <= 5) ? (today - 1) : -1;
+
                 rosterData.members[teamKey].forEach((member, index) => {
+                    const isPlay = (index === playIndex);
                     const memberCard = document.createElement('div');
                     memberCard.className = 'member-card';
+                    
+                    if (isPlay) {
+                        memberCard.style.cssText = 'position: relative; border: 3px solid #e74c3c; border-radius: 8px; box-shadow: 0 4px 12px rgba(231,76,60,0.4); transform: translateY(-4px); transition: 0.2s; overflow: visible; background: #fff;';
+                    } else {
+                        memberCard.style.cssText = 'position: relative; border: 1px solid transparent; border-radius: 8px; transition: 0.2s; overflow: visible; background: #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.1);'; // 기본 카드 테두리 유지용
+                    }
                     
                     const attButtons = gameState.editorMode ? `
                         <button class="att-btn" onclick="changeAttendance('${teamKey}', ${index}, -1)">-</button>
@@ -1322,17 +1349,23 @@
                         </div>
                     ` : '';
 
+                    const statusBtnHtml = isPlay 
+                        ? `<div style="width:100%; padding: 6px 2px; margin-top: 8px; font-size: 0.85em; font-weight: bold; letter-spacing: -0.5px; white-space: nowrap; background: #e74c3c; color: #fff; text-align: center; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">섹스가능 🔥</div>` 
+                        : `<div style="width:100%; padding: 6px 2px; margin-top: 8px; font-size: 0.85em; font-weight: bold; letter-spacing: -0.5px; white-space: nowrap; background: #95a5a6; color: #fff; text-align: center; border-radius: 4px;">센조이中 💤</div>`;
+
                     memberCard.innerHTML = `
-                        <div style="background:#ecf0f1; color:#2c3e50; font-size:0.8em; text-align:center; padding:4px; border-bottom:1px solid #bdc3c7; display:flex; justify-content:center; align-items:center;">
-                            출석: &nbsp;${attButtons}
-                        </div>
-                        ${editPanel}
-                        <div class="member-img" style="background-image: url('${member.imgUrl}'); min-height: 120px;">
-                        </div>
-                        <div class="member-info">
-                            <div class="m-name">${member.name}</div>
-                            <div class="m-skill">${member.skill}</div>
-                            <button class="add-btn" style="width:100%; padding: 6px 2px; margin-top: 8px; font-size: 0.85em; letter-spacing: -0.5px; white-space: nowrap; background: #2ecc71; border-color: #27ae60;" onclick="verifyAndUpload('${teamKey}', ${index})">출석인증</button>
+                        <div style="border-radius: 5px; overflow: hidden; display: flex; flex-direction: column; height: 100%;">
+                            <div style="background:#ecf0f1; color:#2c3e50; font-size:0.8em; text-align:center; padding:4px; border-bottom:1px solid #bdc3c7; display:flex; justify-content:center; align-items:center;">
+                                출석: &nbsp;${attButtons}
+                            </div>
+                            ${editPanel}
+                            <div class="member-img" style="background-image: url('${member.imgUrl}'); min-height: 120px;">
+                            </div>
+                            <div class="member-info">
+                                <div class="m-name">${member.name}</div>
+                                <div class="m-skill">${member.skill}</div>
+                                ${statusBtnHtml}
+                            </div>
                         </div>
                     `;
                     membersWrap.appendChild(memberCard);
